@@ -8,70 +8,70 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OtpService {
-  constructor(
-    @InjectRepository(OTP)
-    private readonly otpRepository: Repository<OTP>,
-    private readonly configService: ConfigService,
-  ) {}
+	constructor(
+		@InjectRepository(OTP)
+		private readonly otpRepository: Repository<OTP>,
+		private readonly configService: ConfigService,
+	) {}
 
-  private OTPExpiryInMs = this.configService.get<number>('secureTokenExpiry');
+	private OTPExpiryInMs = this.configService.get<number>('secureTokenExpiry');
 
-  async generateOtp(otpReason: OTPReason, user: User): Promise<OTP> {
-    const fourDigitOtp = Math.floor(1000 + Math.random() * 9000).toString();
+	async generateOtp(otpReason: OTPReason, user: User): Promise<OTP> {
+		const fourDigitOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
-    const existingOtp = await this.otpRepository.findOne({
-      where: {
-        reason: otpReason,
-        code: fourDigitOtp,
-        user: { id: user.id },
-      },
-    });
+		const existingOtp = await this.otpRepository.findOne({
+			where: {
+				reason: otpReason,
+				code: fourDigitOtp,
+				user: { id: user.id },
+			},
+		});
 
-    if (existingOtp) {
-      return this.generateOtp(otpReason, user);
-    }
+		if (existingOtp) {
+			return this.generateOtp(otpReason, user);
+		}
 
-    const otp = this.otpRepository.create({
-      reason: otpReason,
-      code: fourDigitOtp,
-      user,
-    });
+		const otp = this.otpRepository.create({
+			reason: otpReason,
+			code: fourDigitOtp,
+			user,
+		});
 
-    return await this.otpRepository.save(otp);
-  }
+		return await this.otpRepository.save(otp);
+	}
 
-  async findOrCreateOtp(otpReason: OTPReason, user: User) {
-    const otp = await this.otpRepository.findOne({
-      where: {
-        reason: otpReason,
-        user: { id: user.id },
-        createdAt: MoreThanOrEqual(new Date(Date.now() - this.OTPExpiryInMs)),
-      },
-    });
+	async findOrCreateOtp(otpReason: OTPReason, user: User) {
+		const otp = await this.otpRepository.findOne({
+			where: {
+				reason: otpReason,
+				user: { id: user.id },
+				createdAt: MoreThanOrEqual(new Date(Date.now() - this.OTPExpiryInMs)),
+			},
+		});
 
-    if (otp) {
-      return otp;
-    }
+		if (otp) {
+			return otp;
+		}
 
-    return await this.generateOtp(otpReason, user);
-  }
+		return await this.generateOtp(otpReason, user);
+	}
 
-  async verifyOtp(otp: string, user: User, otpReason: OTPReason) {
-    const validOtp = await this.otpRepository.findOne({
-      where: {
-        reason: otpReason,
-        code: otp,
-        user: { id: user.id },
-        createdAt: MoreThanOrEqual(new Date(Date.now() - this.OTPExpiryInMs)),
-      },
-    });
+	async verifyOtp(otp: string, user: User, otpReason: OTPReason) {
+		const validOtp = await this.otpRepository.findOne({
+			where: {
+				reason: otpReason,
+				code: otp,
+				user: { id: user.id },
+				createdAt: MoreThanOrEqual(new Date(Date.now() - this.OTPExpiryInMs)),
+			},
+		});
 
-    if (!validOtp) {
-      return false;
-    }
+		if (!validOtp) {
+			return false;
+		}
 
-    await this.otpRepository.delete(validOtp.id);
+		await this.otpRepository.delete(validOtp.id);
 
-    return true;
-  }
+		return true;
+	}
 }

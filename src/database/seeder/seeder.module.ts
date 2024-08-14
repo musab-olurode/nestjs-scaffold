@@ -4,8 +4,8 @@ import { PostgresDatabaseProviderModule } from '../providers/postgres.provider.m
 import { UsersSeederModule } from './users/users.seeder.module';
 
 @Module({
-  imports: [PostgresDatabaseProviderModule, UsersSeederModule],
-  providers: [SeederService],
-  exports: [SeederService],
+	imports: [PostgresDatabaseProviderModule, UsersSeederModule],
+	providers: [SeederService],
+	exports: [SeederService],
 })
 export class SeederModule {}

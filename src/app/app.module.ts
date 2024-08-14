@@ -16,35 +16,35 @@ import { MailModule } from '../mail/mail.module';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      expandVariables: true,
-      load: [configuration],
-    }),
-    DatabaseModule,
-    UsersModule,
-    AuthModule,
-    OtpModule,
-    MailModule,
-    AdminModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    WinstonLoggerService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: RequestLoggingInterceptor,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ErrorsInterceptor,
-    },
-  ],
+	imports: [
+		ConfigModule.forRoot({
+			isGlobal: true,
+			expandVariables: true,
+			load: [configuration],
+		}),
+		DatabaseModule,
+		UsersModule,
+		AuthModule,
+		OtpModule,
+		MailModule,
+		AdminModule,
+	],
+	controllers: [AppController],
+	providers: [
+		AppService,
+		WinstonLoggerService,
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: RequestLoggingInterceptor,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: JwtAuthGuard,
+		},
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: ErrorsInterceptor,
+		},
+	],
 })
 export class AppModule {}

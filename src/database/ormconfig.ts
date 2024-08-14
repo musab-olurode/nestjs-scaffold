@@ -8,15 +8,15 @@ envConfig();
 const config = configuration();
 
 export const AppDataSource = new DataSource({
-  type: config.database.connection,
-  host: config.database.host,
-  port: config.database.port,
-  username: config.database.username,
-  password: config.database.password,
-  extra: { charset: config.database.charset },
-  synchronize: config.database.synchronize,
-  database: config.database.name,
-  migrations: [config.database.migrations],
-  entities: [config.database.entities],
-  namingStrategy: new SnakeNamingStrategy(),
+	type: config.database.connection,
+	host: config.database.host,
+	port: config.database.port,
+	username: config.database.username,
+	password: config.database.password,
+	extra: { charset: config.database.charset },
+	synchronize: config.database.synchronize,
+	database: config.database.name,
+	migrations: [config.database.migrations],
+	entities: [config.database.entities],
+	namingStrategy: new SnakeNamingStrategy(),
 });

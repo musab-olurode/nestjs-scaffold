@@ -1,4 +1,4 @@
 export enum IdentityProvider {
-  GOOGLE = 'GOOGLE',
-  TWITTER = 'TWITTER',
+	GOOGLE = 'GOOGLE',
+	TWITTER = 'TWITTER',
 }

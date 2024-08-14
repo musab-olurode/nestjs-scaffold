@@ -1,3 +1,3 @@
 export interface SeederServiceProvider {
-  create: () => Promise<void>;
+	create: () => Promise<void>;
 }

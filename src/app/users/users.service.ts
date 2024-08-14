@@ -11,51 +11,64 @@ import { PaginationService } from '../../pagination/pagination.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly logger: WinstonLoggerService,
-  ) {
-    this.logger.setContext(UsersService.name);
-  }
+	constructor(
+		@InjectRepository(User)
+		private readonly userRepository: Repository<User>,
+		private readonly logger: WinstonLoggerService,
+	) {
+		this.logger.setContext(UsersService.name);
+	}
 
-  async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create(createUserDto);
-    return await this.userRepository.save(user);
-  }
+	async create(createUserDto: CreateUserDto) {
+		const user = this.userRepository.create(createUserDto);
+		return await this.userRepository.save(user);
+	}
 
-  findAll(query: PaginateQuery) {
-    return PaginationService.paginate(query, this.userRepository);
-  }
+	findAll(query: PaginateQuery) {
+		return PaginationService.paginate(query, this.userRepository);
+	}
 
-  async findOne(id: string) {
-    const user = await this.userRepository.findOneBy({ id });
+	async getOne(id: string) {
+		const user = await this.userRepository.findOneBy({ id });
 
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
 
-    return new SuccessResponse('User retrieved', user);
-  }
+		return user;
+	}
 
-  async findOneProfile(id: string) {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.id = :id', { id })
-      .getOne();
+	async findOne(id: string) {
+		const user = await this.userRepository.findOneBy({ id });
 
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
 
-    return user;
-  }
+		return new SuccessResponse('User retrieved', user);
+	}
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+	async findOneProfile(id: string) {
+		const user = await this.userRepository
+			.createQueryBuilder('user')
+			.where('user.id = :id', { id })
+			.getOne();
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
-  }
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} not found`);
+		}
+
+		return user;
+	}
+
+	async update(id: string, updateUserDto: UpdateUserDto) {
+		const user = await this.getOne(id);
+		Object.assign(user, updateUserDto);
+		const updatedUser = await this.userRepository.save(user);
+		return new SuccessResponse('User updated', updatedUser);
+	}
+
+	remove(id: string) {
+		return `This action removes a #${id} user`;
+	}
 }

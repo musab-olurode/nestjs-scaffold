@@ -6,9 +6,9 @@ import { User } from './entities/user.entity';
 import { WinstonLoggerService } from '../../logger/winston-logger/winston-logger.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
-  controllers: [UsersController],
-  providers: [UsersService, WinstonLoggerService],
-  exports: [UsersService],
+	imports: [TypeOrmModule.forFeature([User])],
+	controllers: [UsersController],
+	providers: [UsersService, WinstonLoggerService],
+	exports: [UsersService],
 })
 export class UsersModule {}

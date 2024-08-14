@@ -8,4 +8,4 @@ const dataUri = new DataURIParser();
  * @returns {String} The data url from the string buffer
  */
 export const formatAsDataUri = (file: Express.Multer.File) =>
-  dataUri.format(file.originalname, file.buffer);
+	dataUri.format(file.originalname, file.buffer);

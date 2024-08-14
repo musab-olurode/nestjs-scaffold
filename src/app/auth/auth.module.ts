@@ -17,25 +17,25 @@ import { JwtModule } from '@nestjs/jwt';
 import configuration from '../../config/configuration';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, PasswordReset]),
-    PassportModule.register({ session: true }),
-    UsersModule,
-    MailModule,
-    JwtModule.register({
-      secret: configuration().jwt.secret,
-      signOptions: { expiresIn: configuration().jwt.expiresIn },
-    }),
-  ],
-  controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    GoogleOauthStrategy,
-    TwitterOauthStrategy,
-    SessionSerializer,
-    WinstonLoggerService,
-  ],
+	imports: [
+		TypeOrmModule.forFeature([User, PasswordReset]),
+		PassportModule.register({ session: true }),
+		UsersModule,
+		MailModule,
+		JwtModule.register({
+			secret: configuration().jwt.secret,
+			signOptions: { expiresIn: configuration().jwt.expiresIn },
+		}),
+	],
+	controllers: [AuthController],
+	providers: [
+		AuthService,
+		LocalStrategy,
+		JwtStrategy,
+		GoogleOauthStrategy,
+		TwitterOauthStrategy,
+		SessionSerializer,
+		WinstonLoggerService,
+	],
 })
 export class AuthModule {}

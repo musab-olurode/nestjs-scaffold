@@ -3,7 +3,7 @@ import { AdminController } from './admin.controller';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [UsersModule],
-  controllers: [AdminController],
+	imports: [UsersModule],
+	controllers: [AdminController],
 })
 export class AdminModule {}
