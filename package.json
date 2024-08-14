@@ -22,8 +22,7 @@
 		"migration:run": "npm run typeorm -- migration:run",
 		"migration:revert": "npm run typeorm -- migration:revert",
 		"seed": "ts-node -r tsconfig-paths/register ./src/database/seeder/seed.ts",
-		"prepare": "husky install",
-		"prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+		"prepare": "husky install"
 	},
 	"dependencies": {
 		"@nestjs-modules/mailer": "^1.11.2",
@@ -63,6 +62,7 @@
 	"devDependencies": {
 		"@nestjs/cli": "^10.0.0",
 		"@nestjs/schematics": "^10.0.0",
+		"@nestjs/swagger": "^7.4.0",
 		"@nestjs/testing": "^10.0.0",
 		"@types/bcrypt": "^5.0.2",
 		"@types/express": "^4.17.17",
