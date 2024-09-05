@@ -14,13 +14,15 @@ import { ErrorsInterceptor } from '../interceptor/error.interceptor';
 import { OtpModule } from './otp/otp.module';
 import { MailModule } from '../mail/mail.module';
 import { AdminModule } from './admin/admin.module';
+import { validate } from '../validation/env.validation';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
 			expandVariables: true,
-			load: [configuration],
+			load: [() => configuration],
+			validate,
 		}),
 		DatabaseModule,
 		UsersModule,

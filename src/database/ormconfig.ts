@@ -5,18 +5,16 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 envConfig();
 
-const config = configuration();
-
 export const AppDataSource = new DataSource({
-	type: config.database.connection,
-	host: config.database.host,
-	port: config.database.port,
-	username: config.database.username,
-	password: config.database.password,
-	extra: { charset: config.database.charset },
-	synchronize: config.database.synchronize,
-	database: config.database.name,
-	migrations: [config.database.migrations],
-	entities: [config.database.entities],
+	type: configuration.TYPEORM_CONNECTION,
+	host: configuration.TYPEORM_HOST,
+	port: configuration.TYPEORM_PORT,
+	username: configuration.TYPEORM_USERNAME,
+	password: configuration.TYPEORM_PASSWORD,
+	extra: { charset: configuration.TYPEORM_CHARSET },
+	synchronize: configuration.TYPEORM_SYNCHRONIZE,
+	database: configuration.TYPEORM_DATABASE,
+	migrations: [configuration.TYPEORM_MIGRATIONS],
+	entities: [configuration.TYPEORM_ENTITIES],
 	namingStrategy: new SnakeNamingStrategy(),
 });

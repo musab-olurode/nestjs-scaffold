@@ -36,15 +36,14 @@ export class RequestLoggingInterceptor implements NestInterceptor {
 			ip,
 			query,
 		});
-		return next
-			.handle()
-			.pipe(
-				tap((responseBody) =>
+		return next.handle().pipe(
+			tap({
+				next: (responseBody) =>
 					this.logger.log(
 						`HTTP response ${requestHash} +${Date.now() - now}ms`,
 						responseBody,
 					),
-				),
-			);
+			}),
+		);
 	}
 }

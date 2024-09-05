@@ -5,16 +5,17 @@ import { MoreThanOrEqual, Repository } from 'typeorm';
 import { OTPReason } from '../../types/otp';
 import { User } from '../users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { EnvironmentVariables } from '../../validation/env.validation';
 
 @Injectable()
 export class OtpService {
 	constructor(
 		@InjectRepository(OTP)
 		private readonly otpRepository: Repository<OTP>,
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<EnvironmentVariables, true>,
 	) {}
 
-	private OTPExpiryInMs = this.configService.get<number>('secureTokenExpiry');
+	private OTPExpiryInMs = this.configService.get<number>('SECURE_TOKEN_EXPIRY');
 
 	async generateOtp(otpReason: OTPReason, user: User): Promise<OTP> {
 		const fourDigitOtp = Math.floor(1000 + Math.random() * 9000).toString();

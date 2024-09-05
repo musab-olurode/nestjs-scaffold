@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 import { User } from '../../users/entities/user.entity';
 import { AppPermissions } from '../permissions/app.permission';
+import { Request } from 'express';
+import { EnvironmentVariables } from '../../../validation/env.validation';
 
 export interface JwtPayload {
 	sub: string;
@@ -14,12 +16,17 @@ export interface JwtPayload {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(
-		private configService: ConfigService,
+		private configService: ConfigService<EnvironmentVariables, true>,
 		private readonly usersService: UsersService,
 	) {
 		super({
-			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey: configService.get('jwt.secret'),
+			jwtFromRequest: ExtractJwt.fromExtractors([
+				(request: Request) => {
+					return request?.cookies?.accessToken;
+				},
+				ExtractJwt.fromAuthHeaderAsBearerToken(),
+			]),
+			secretOrKey: configService.get('JWT_SECRET'),
 			passReqToCallback: true,
 		});
 	}

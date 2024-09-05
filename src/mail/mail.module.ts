@@ -4,25 +4,28 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { MailService } from './mail.service';
+import { EnvironmentVariables } from '../validation/env.validation';
 
 @Module({
 	imports: [
 		MailerModule.forRootAsync({
-			useFactory: async (config: ConfigService) => ({
+			useFactory: async (
+				config: ConfigService<EnvironmentVariables, true>,
+			) => ({
 				transport: {
-					host: config.get('mail.smtpHost'),
-					port: parseInt(config.get('mail.smtpPort')),
-					secure: config.get('nodeEnv') === 'production',
-					auth: config.get('nodeEnv') === 'production' && {
-						user: config.get('mail.smtpEmail'),
-						pass: config.get('mail.smtpPassword'),
+					host: config.get('SMTP_HOST'),
+					port: config.get<number>('SMTP_PORT'),
+					secure: config.get('NODE_ENV') === 'production',
+					auth: config.get('NODE_ENV') === 'production' && {
+						user: config.get('SMTP_EMAIL'),
+						pass: config.get('SMTP_PASSWORD'),
 					},
 					tls: {
-						rejectUnauthorized: config.get('nodeEnv') === 'production',
+						rejectUnauthorized: config.get('NODE_ENV') === 'production',
 					},
 				},
 				defaults: {
-					from: `"${config.get('mail.fromName')}" <${config.get('mail.fromEmail')}>`,
+					from: `"${config.get('FROM_NAME')}" <${config.get('FROM_EMAIL')}>`,
 				},
 				template: {
 					dir: join(__dirname, 'templates'),

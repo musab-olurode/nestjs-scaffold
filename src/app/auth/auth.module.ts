@@ -23,8 +23,8 @@ import configuration from '../../config/configuration';
 		UsersModule,
 		MailModule,
 		JwtModule.register({
-			secret: configuration().jwt.secret,
-			signOptions: { expiresIn: configuration().jwt.expiresIn },
+			secret: configuration.JWT_SECRET,
+			signOptions: { expiresIn: configuration.JWT_EXPIRE },
 		}),
 	],
 	controllers: [AuthController],

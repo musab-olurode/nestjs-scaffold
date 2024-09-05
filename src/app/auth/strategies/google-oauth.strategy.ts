@@ -5,19 +5,20 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/app/users/users.service';
 import { IdentityProvider } from '../../../types/user';
 import { AuthService } from '../auth.service';
+import { EnvironmentVariables } from '../../../validation/env.validation';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 	constructor(
-		configService: ConfigService,
+		configService: ConfigService<EnvironmentVariables, true>,
 		private readonly authService: AuthService,
 		private readonly usersService: UsersService,
 	) {
 		super({
-			clientID: configService.get<string>('oauth.googleClientId'),
-			clientSecret: configService.get<string>('oauth.googleClientSecret'),
+			clientID: configService.get<string>('OAUTH_GOOGLE_ID'),
+			clientSecret: configService.get<string>('OAUTH_GOOGLE_SECRET'),
 			callbackURL:
-				configService.get<string>('clientUrl') + '/auth/login/social-redirect',
+				configService.get<string>('CLIENT_URL') + '/auth/login/social-redirect',
 			scope: ['email', 'profile'],
 		});
 	}

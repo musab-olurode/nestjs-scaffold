@@ -21,7 +21,7 @@ export class UsersSeederService implements SeederServiceProvider {
 	private async createSuperAdmin() {
 		const existingSuperAdmin = await this.userRepository.findOne({
 			where: {
-				email: configuration().auth.superAdminEmail,
+				email: configuration.SUPER_ADMIN_EMAIL,
 				permissions: ArrayContains([
 					AppPermissions.CREATE_USERS,
 					AppPermissions.READ_USERS,
@@ -36,8 +36,8 @@ export class UsersSeederService implements SeederServiceProvider {
 
 		const superAdmin = this.userRepository.create({
 			...SUPER_ADMIN,
-			email: configuration().auth.superAdminEmail,
-			password: configuration().auth.superAdminPassword,
+			email: configuration.SUPER_ADMIN_EMAIL,
+			password: configuration.SUPER_ADMIN_PASSWORD,
 		});
 
 		return await this.userRepository.save(superAdmin);

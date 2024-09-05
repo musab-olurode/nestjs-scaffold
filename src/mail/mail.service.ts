@@ -4,17 +4,18 @@ import { User } from '../app/users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import { OTP } from '../app/otp/entities/otp.entity';
 import { OTPReasonText } from '../types/otp';
+import { EnvironmentVariables } from '../validation/env.validation';
 
 @Injectable()
 export class MailService {
 	constructor(
 		private mailerService: MailerService,
-		private configService: ConfigService,
+		private configService: ConfigService<EnvironmentVariables, true>,
 	) {}
 
 	async sendResetPassword(user: User, resetToken: string) {
 		const url = `${this.configService.get<string>(
-			'clientUrl',
+			'CLIENT_URL',
 		)}/auth/forgot-password/reset?token=${resetToken}`;
 
 		await this.mailerService.sendMail({
@@ -61,7 +62,7 @@ export class MailService {
 
 	async sendEmailVerification(user: User, verificationToken: string) {
 		const url = `${this.configService.get<string>(
-			'clientUrl',
+			'CLIENT_URL',
 		)}/auth/verify-email?token=${verificationToken}`;
 
 		await this.mailerService.sendMail({

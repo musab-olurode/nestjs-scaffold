@@ -33,7 +33,7 @@ export class ErrorsInterceptor implements NestInterceptor {
 
 				const errorStatus = err.status || 500;
 				let errorMessage = err.message || err;
-				const IS_PRODUCTION = configuration().nodeEnv === 'production';
+				const IS_PRODUCTION = configuration.NODE_ENV === 'production';
 
 				if (errorStatus === 500) {
 					if (IS_PRODUCTION) {

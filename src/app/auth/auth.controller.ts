@@ -5,6 +5,8 @@ import {
 	HttpCode,
 	Patch,
 	Post,
+	Req,
+	Res,
 	UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -20,6 +22,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -29,8 +32,11 @@ export class AuthController {
 	@UseGuards(LocalAuthGuard)
 	@Post('signin')
 	@HttpCode(200)
-	signin(@CurrentUser() user: User) {
-		return this.authService.signin(user);
+	signin(
+		@CurrentUser() user: User,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		return this.authService.signin(user, response);
 	}
 
 	@Public()
@@ -42,8 +48,11 @@ export class AuthController {
 	@Public()
 	@UseGuards(GoogleOauthGuard)
 	@Get('/signin/google/redirect')
-	googleOauthRedirect(@CurrentUser() user: User) {
-		return this.authService.socialSignin(user);
+	googleOauthRedirect(
+		@CurrentUser() user: User,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		return this.authService.socialSignin(user, response);
 	}
 
 	@Public()
@@ -55,14 +64,20 @@ export class AuthController {
 	@Public()
 	@UseGuards(TwitterOauthGuard)
 	@Get('/signin/twitter/redirect')
-	twitterOauthRedirect(@CurrentUser() user: User) {
-		return this.authService.socialSignin(user);
+	twitterOauthRedirect(
+		@CurrentUser() user: User,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		return this.authService.socialSignin(user, response);
 	}
 
 	@Public()
 	@Post('signup')
-	signup(@Body() signupUserDto: SignupUserDto) {
-		return this.authService.signup(signupUserDto);
+	signup(
+		@Body() signupUserDto: SignupUserDto,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		return this.authService.signup(signupUserDto, response);
 	}
 
 	@Public()
@@ -103,7 +118,22 @@ export class AuthController {
 
 	@Public()
 	@Post('refresh')
-	refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-		return this.authService.refreshToken(refreshTokenDto.refreshToken);
+	refreshToken(
+		@Body() refreshTokenDto: RefreshTokenDto,
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		return this.authService.refreshToken(
+			request,
+			response,
+			refreshTokenDto.refreshToken,
+		);
+	}
+
+	@Public()
+	@Post('signout')
+	@HttpCode(200)
+	signout(@Res({ passthrough: true }) response: Response) {
+		return this.authService.signout(response);
 	}
 }

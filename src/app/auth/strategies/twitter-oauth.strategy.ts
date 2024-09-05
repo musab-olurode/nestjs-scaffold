@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/app/users/users.service';
 import { IdentityProvider } from '../../../types/user';
 import { AuthService } from '../auth.service';
+import { EnvironmentVariables } from '../../../validation/env.validation';
 
 @Injectable()
 export class TwitterOauthStrategy extends PassportStrategy(
@@ -12,15 +13,17 @@ export class TwitterOauthStrategy extends PassportStrategy(
 	'twitter',
 ) {
 	constructor(
-		configService: ConfigService,
+		configService: ConfigService<EnvironmentVariables, true>,
 		private readonly authService: AuthService,
 		private readonly usersService: UsersService,
 	) {
 		super({
-			consumerKey: configService.get<string>('oauth.twitterConsumerKey'),
-			consumerSecret: configService.get<string>('oauth.twitterConsumerSecret'),
+			consumerKey: configService.get<string>('OAUTH_TWITTER_CONSUMER_KEY'),
+			consumerSecret: configService.get<string>(
+				'OAUTH_TWITTER_CONSUMER_SECRET',
+			),
 			callbackURL:
-				configService.get<string>('clientUrl') + '/auth/login/social-redirect',
+				configService.get<string>('CLIENT_URL') + '/auth/login/social-redirect',
 			includeEmail: true,
 		});
 	}

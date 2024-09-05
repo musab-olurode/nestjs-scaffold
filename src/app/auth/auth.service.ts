@@ -26,6 +26,11 @@ import { PasswordReset } from './entities/password-reset.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UsersService } from '../users/users.service';
 import { generateToken } from '../../utils';
+import { CookieOptions, Request, Response } from 'express';
+import {
+	Environment,
+	EnvironmentVariables,
+} from '../../validation/env.validation';
 
 @Injectable()
 export class AuthService {
@@ -36,15 +41,16 @@ export class AuthService {
 		private readonly passwordResetRepository: Repository<PasswordReset>,
 		private readonly logger: WinstonLoggerService,
 		private jwtService: JwtService,
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<EnvironmentVariables, true>,
 		private mailService: MailService,
 		private readonly usersService: UsersService,
 	) {
 		this.logger.setContext(AuthService.name);
 	}
 
-	private ResetTokenExpiryInMs =
-		this.configService.get<number>('secureTokenExpiry');
+	private ResetTokenExpiryInMs = this.configService.get<number>(
+		'SECURE_TOKEN_EXPIRY',
+	);
 
 	async validateUser(
 		email: string,
@@ -94,7 +100,7 @@ export class AuthService {
 		return user;
 	}
 
-	async postSignin(user: User) {
+	async postSignin(user: User, response: Response) {
 		const payload: JwtPayload = { sub: user.id, permissions: user.permissions };
 
 		const {
@@ -109,27 +115,46 @@ export class AuthService {
 			...parsedUser
 		} = user;
 
+		const accessToken = this.jwtService.sign(payload);
+		const refreshToken = this.jwtService.sign(payload, {
+			secret: this.configService.get<string>('REFRESH_JWT_SECRET'),
+			expiresIn: this.configService.get<string>('REFRESH_JWT_EXPIRE'),
+		});
+
+		const cookieOptions = this.getCookieOptions();
+
+		response.cookie('accessToken', accessToken, {
+			...cookieOptions,
+			expires: new Date(
+				Date.now() + this.configService.get<number>('JWT_COOKIE_EXPIRE'),
+			),
+		});
+		response.cookie('refreshToken', refreshToken, {
+			...cookieOptions,
+			expires: new Date(
+				Date.now() +
+					this.configService.get<number>('REFRESH_JWT_COOKIE_EXPIRE'),
+			),
+		});
+
 		return {
 			user: parsedUser,
-			accessToken: this.jwtService.sign(payload),
-			refreshToken: this.jwtService.sign(payload, {
-				secret: this.configService.get<string>('jwt.refreshSecret'),
-				expiresIn: this.configService.get<string>('jwt.refreshExpiresIn'),
-			}),
+			accessToken,
+			refreshToken,
 		};
 	}
 
-	async signin(user: User) {
-		const response = this.postSignin(user);
-		return new SuccessResponse('Signin successful', response);
+	async signin(user: User, response: Response) {
+		const signinResponse = await this.postSignin(user, response);
+		return new SuccessResponse('Signin successful', signinResponse);
 	}
 
-	async socialSignin(user: User) {
-		const response = await this.postSignin(user);
-		return new SuccessResponse('Signin successful', response);
+	async socialSignin(user: User, response: Response) {
+		const signInResponse = await this.postSignin(user, response);
+		return new SuccessResponse('Signin successful', signInResponse);
 	}
 
-	async signup(signupUserDto: SignupUserDto) {
+	async signup(signupUserDto: SignupUserDto, response: Response) {
 		const existingUserWithEmail = await this.findOneUser(
 			{
 				email: signupUserDto.email,
@@ -161,11 +186,11 @@ export class AuthService {
 		});
 		await this.userRepository.save(user);
 
-		const response = await this.postSignin(user);
+		const signupResponse = await this.postSignin(user, response);
 
 		return new SuccessResponse(
 			'Signup successful',
-			response,
+			signupResponse,
 			HttpStatus.CREATED,
 		);
 	}
@@ -317,13 +342,20 @@ export class AuthService {
 		return new SuccessResponse('Email verified successfully', {});
 	}
 
-	async refreshToken(refreshToken: string) {
+	async refreshToken(
+		request: Request,
+		response: Response,
+		refreshToken?: string,
+	) {
 		let userId: string;
 
 		try {
-			const { sub: payloadSub } = this.jwtService.verify(refreshToken, {
-				secret: this.configService.get<string>('jwt.refreshSecret'),
-			});
+			const { sub: payloadSub } = this.jwtService.verify(
+				refreshToken || request.cookies.refreshToken,
+				{
+					secret: this.configService.get<string>('REFRESH_JWT_SECRET'),
+				},
+			);
 			userId = payloadSub;
 		} catch (error) {
 			throw new UnauthorizedException('Invalid token');
@@ -331,8 +363,41 @@ export class AuthService {
 
 		const user = await this.usersService.findOneProfile(userId);
 
-		const response = await this.postSignin(user);
+		const refreshTokenResponse = await this.postSignin(user, response);
 
-		return new SuccessResponse('Token refreshed successfully', response);
+		return new SuccessResponse(
+			'Token refreshed successfully',
+			refreshTokenResponse,
+		);
+	}
+
+	private getCookieOptions() {
+		const isProduction =
+			this.configService.get<Environment>('NODE_ENV') === 'production';
+		const clientUrlParts = this.configService
+			.get<string>('CLIENT_URL')
+			.split('//');
+		let cookieDomain = clientUrlParts[1];
+		if (cookieDomain.startsWith('www.')) {
+			cookieDomain = cookieDomain.slice(4);
+		}
+
+		const cookieOptions: CookieOptions = {
+			httpOnly: true,
+			sameSite: 'lax',
+			domain: isProduction ? cookieDomain : undefined,
+			secure: isProduction,
+		};
+
+		return cookieOptions;
+	}
+
+	async signout(response: Response) {
+		const cookieOptions = this.getCookieOptions();
+
+		response.clearCookie('accessToken', cookieOptions);
+		response.clearCookie('refreshToken', cookieOptions);
+
+		return new SuccessResponse('Signout successful', {});
 	}
 }
