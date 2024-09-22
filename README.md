@@ -73,6 +73,14 @@ To run migrations simply run
 $ yarn migration:run
 ```
 
+### Reverting Migrations
+
+To revert migrations simply run
+
+```
+$ yarn migration:revert
+```
+
 ## Test
 
 ```bash

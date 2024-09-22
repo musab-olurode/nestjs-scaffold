@@ -1,10 +1,4 @@
-import {
-	BeforeInsert,
-	BeforeUpdate,
-	Column,
-	Entity,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { IdentityProvider } from '../../../types/user';
 import { CapitalizeTransformer } from '../../../utils/transformers/capitalize';
@@ -13,25 +7,20 @@ import { Timestamp } from '../../../database/entities/timestamp.entity';
 
 @Entity()
 export class User extends Timestamp {
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
-
 	@Column({
-		name: 'identity_provider',
 		type: 'enum',
 		enum: IdentityProvider,
 		nullable: true,
 		select: false,
 	})
-	identityProvider: IdentityProvider | null;
+	identityProvider?: IdentityProvider;
 
 	@Column({
-		name: 'identity_provider_id',
 		unique: true,
 		nullable: true,
 		select: false,
 	})
-	identityProviderId: string | null;
+	identityProviderId?: string;
 
 	@Column({ unique: true })
 	email: string;
@@ -57,7 +46,7 @@ export class User extends Timestamp {
 		unique: true,
 		select: false,
 	})
-	emailVerificationToken?: string | null;
+	emailVerificationToken?: string;
 
 	@Column({ default: false })
 	emailVerified: boolean;
