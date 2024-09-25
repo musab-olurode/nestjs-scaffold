@@ -35,11 +35,11 @@ export class EnvironmentVariables {
 	@IsUrl({ require_tld: false, require_protocol: true })
 	CLIENT_URL!: string;
 
-	@IsUrl({ require_tld: false, require_protocol: true })
-	DEBUG_CLIENT_URL!: string;
+	@IsString()
+	CLIENT_URL_REGEX!: string;
 
 	@IsString()
-	PREVIEW_CLIENT_URL!: string;
+	PREVIEW_CLIENT_URL_REGEX!: string;
 
 	// strict decorator for interface PostgresConnectionOptions['type']
 	@IsString()

@@ -23,9 +23,8 @@ async function bootstrap() {
 	);
 	app.enableCors({
 		origin: [
-			config.get<string>('CLIENT_URL'),
-			config.get<string>('DEBUG_CLIENT_URL'),
-			new RegExp(config.get<string>('PREVIEW_CLIENT_URL')),
+			new RegExp(config.get<string>('CLIENT_URL_REGEX')),
+			new RegExp(config.get<string>('PREVIEW_CLIENT_URL_REGEX')),
 		],
 		credentials: true,
 	});
