@@ -1,9 +1,6 @@
 import configuration from '../config/configuration';
 import { DataSource } from 'typeorm';
-import { config as envConfig } from 'dotenv';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-
-envConfig();
 
 export const AppDataSource = new DataSource({
 	type: configuration.TYPEORM_CONNECTION,

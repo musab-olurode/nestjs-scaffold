@@ -1,12 +1,6 @@
-import { EnvironmentVariables } from '../validation/env.validation';
-import { plainToInstance } from 'class-transformer';
+import { validate as validateEnv } from '../validation/env.validation';
 import 'dotenv/config';
 
-const config = () =>
-	plainToInstance(EnvironmentVariables, process.env, {
-		enableImplicitConversion: true,
-	});
-
-const configuration = config();
+const configuration = validateEnv(process.env);
 
 export default configuration;
