@@ -1,11 +1,19 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy } from 'passport-google-oauth20';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UsersService } from 'src/app/users/users.service';
-import { IdentityProvider } from '../../../types/user';
-import { AuthService } from '../auth.service';
-import { EnvironmentVariables } from '../../../validation/env.validation';
+import { PassportStrategy } from '@nestjs/passport';
+
+import { EnvironmentVariables } from '@/validation/env.validation';
+
+import { AuthService } from '@/app/auth/auth.service';
+import { UsersService } from '@/app/users/users.service';
+
+import { IdentityProvider } from '@/types/user';
+
+import { Profile, Strategy } from 'passport-google-oauth20';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
@@ -30,6 +38,10 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 	) {
 		const { id, name, emails } = profile;
 
+		if (!emails || emails.length === 0 || !name) {
+			throw new BadRequestException('Invalid profile');
+		}
+
 		const existingNonGoogleProviderUser = await this.authService.findOneUser(
 			{
 				email: emails[0].value,
@@ -44,9 +56,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
 			existingNonGoogleProviderUser &&
 			existingNonGoogleProviderUser.identityProvider !== IdentityProvider.GOOGLE
 		) {
-			throw new BadRequestException(
-				'You cannot sign in with your Google account because an account with this email address already exists',
-			);
+			throw new UnauthorizedException('Invalid credentials');
 		}
 
 		let user = await this.authService.findOauthUser(

@@ -1,6 +1,5 @@
-import { ExecutionContext, HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class TwitterOauthGuard extends AuthGuard('twitter') {
@@ -8,22 +7,22 @@ export class TwitterOauthGuard extends AuthGuard('twitter') {
 		super();
 	}
 
-	handleRequest<TUser = User>(
-		err: any,
-		user: any,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		info: any,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		context: ExecutionContext,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		status?: any,
+	handleRequest<TUser = unknown>(
+		err: { message: string; status: number } | undefined,
+		user: TUser,
 	): TUser {
 		if (err || !user) {
-			throw new HttpException(
-				err.message || 'Something went wrong, please try again',
-				err.status || 500,
-			);
+			let errorStatus = 500;
+			let errorMessage = 'Something went wrong, please try again';
+
+			if (err) {
+				errorStatus = err.status;
+				errorMessage = err.message;
+			}
+
+			throw new HttpException(errorMessage, errorStatus);
 		}
+
 		return user;
 	}
 }

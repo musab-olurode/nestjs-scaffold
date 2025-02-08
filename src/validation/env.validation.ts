@@ -35,13 +35,7 @@ export class EnvironmentVariables {
 	@IsUrl({ require_tld: false, require_protocol: true })
 	CLIENT_URL!: string;
 
-	@IsString()
-	CLIENT_URL_REGEX!: string;
-
-	@IsString()
-	PREVIEW_CLIENT_URL_REGEX!: string;
-
-	// strict decorator for interface PostgresConnectionOptions['type']
+	// Strict decorator for interface PostgresConnectionOptions['type']
 	@IsString()
 	TYPEORM_CONNECTION!: PostgresConnectionOptions['type'];
 
@@ -176,5 +170,6 @@ export function validate(config: Record<string, unknown>) {
 	if (errors.length > 0) {
 		throw new Error(errors.join('\n'));
 	}
+
 	return validatedConfig;
 }

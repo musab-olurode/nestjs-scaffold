@@ -1,7 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
-import { RequirePermissions } from '../auth/guards/permissions.guard';
-import { AppPermissions } from '../auth/permissions/app.permission';
-import { UsersService } from '../users/users.service';
+
+import { RequirePermissions } from '@/app/auth/guards/permissions.guard';
+
+import { UsersService } from '@/app/users/users.service';
+
+import { AppPermissions } from '@/app/auth/permissions/app.permission';
+
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('admin')

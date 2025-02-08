@@ -1,4 +1,5 @@
-import configuration from '../config/configuration';
+import configuration from '@/config/configuration';
+
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 

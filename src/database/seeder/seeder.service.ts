@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { UsersSeederService } from './users/users.seeder.service';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { UsersSeederService } from '@/database/seeder/users/users.seeder.service';
 
 @Injectable()
 export class SeederService {
@@ -9,32 +10,33 @@ export class SeederService {
 
 	async seed() {
 		// Run Seeders
-		for (const seeder of this.SEEDERS) {
-			await seeder
-				.create()
-				.then((completed) => {
-					const dateString = new Date().toLocaleString();
-					const seederName = this.extractSeederName(seeder.constructor.name);
-					console.log(
-						`[Seeder] ${process.pid} - ${dateString}    LOG [${seederName}] Seeding completed`,
-					);
-					Promise.resolve(completed);
-				})
-				.catch((error) => {
-					const dateString = new Date().toLocaleString();
-					const seederName = this.extractSeederName(seeder.constructor.name);
-					console.log(
-						`[Seeder] ${process.pid} - ${dateString}    LOG [${seederName}] Seeding failed`,
-					);
-					Promise.reject(error);
-				});
-		}
+		const results = await Promise.all(
+			this.SEEDERS.map(async (seeder) => {
+				const seederName = this.extractSeederName(seeder.constructor.name);
+				const logger = new Logger(seederName, { timestamp: true });
+
+				try {
+					const completed = await seeder.create();
+
+					logger.log('Seeding completed');
+
+					return completed;
+				} catch (error) {
+					logger.error('Seeding failed', error);
+					throw error;
+				}
+			}),
+		);
+
+		return results;
 	}
 
 	private extractSeederName(className: string) {
 		let seederName = className;
-		const seederNameParts = seederName.split('Seeder');
+		const seederNameParts = seederName.split('Service');
+
 		seederName = seederNameParts.length > 0 ? seederNameParts[0] : seederName;
+
 		return seederName;
 	}
 }

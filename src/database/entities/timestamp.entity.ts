@@ -1,3 +1,5 @@
+import { ColumnOrder, getColumnOrder } from '@/decorators/order.decorator';
+
 import {
 	BaseEntity,
 	CreateDateColumn,
@@ -7,7 +9,6 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
-import { ColumnOrder, getColumnOrder } from '../../decorators/order.decorator';
 
 export abstract class Timestamp extends BaseEntity {
 	@ColumnOrder(-1)
@@ -29,9 +30,10 @@ export abstract class Timestamp extends BaseEntity {
 	static useDataSource(dataSource: DataSource) {
 		BaseEntity.useDataSource.call(this, dataSource);
 		const meta = dataSource.entityMetadatasMap.get(this);
-
 		const getOrderSafely = (column: ColumnMetadata) => {
-			const target = column.target as any;
+			const target = column.target as
+				| { prototype: object | undefined }
+				| undefined;
 
 			// Check if the target and its prototype exist
 			if (target && target.prototype) {

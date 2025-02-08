@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { OTP } from './entities/otp.entity';
-import { MoreThanOrEqual, Repository } from 'typeorm';
-import { OTPReason } from '../../types/otp';
-import { User } from '../users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from '../../validation/env.validation';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { EnvironmentVariables } from '@/validation/env.validation';
+
+import { OTP } from '@/app/otp/entities/otp.entity';
+import { User } from '@/app/users/entities/user.entity';
+
+import { OTPReason } from '@/types/otp';
+
+import { MoreThanOrEqual, Repository } from 'typeorm';
 
 @Injectable()
 export class OtpService {

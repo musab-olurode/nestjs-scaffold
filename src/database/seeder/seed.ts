@@ -1,28 +1,25 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+
 import { SeederModule } from './seeder.module';
+
 import { SeederService } from './seeder.service';
 
-async function bootstrap() {
+function bootstrap() {
 	NestFactory.createApplicationContext(SeederModule)
 		.then((appContext) => {
 			const seeder = appContext.get(SeederService);
-			let dateString = new Date().toLocaleString();
-			console.log(
-				`[Seeder] ${process.pid} - ${dateString}    LOG [Seeder] Seeding started`,
-			);
+			const logger = new Logger('Seeder', { timestamp: true });
+
+			logger.debug('Seeding started');
+
 			seeder
 				.seed()
 				.then(() => {
-					dateString = new Date().toLocaleString();
-					console.log(
-						`[Seeder] ${process.pid} - ${dateString}    LOG [Seeder] Seeding completed`,
-					);
+					logger.debug('Seeding completed');
 				})
 				.catch((error) => {
-					dateString = new Date().toLocaleString();
-					console.error(
-						`[Seeder] ${process.pid} - ${dateString}    LOG [Seeder] Seeding failed`,
-					);
+					logger.error('Seeding failed', error);
 					throw error;
 				})
 				.finally(() => appContext.close());

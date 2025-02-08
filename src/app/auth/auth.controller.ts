@@ -9,19 +9,25 @@ import {
 	Res,
 	UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { Public } from '../../decorators/public.decorator';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CurrentUser } from '../../decorators/user.decorator';
-import { User } from '../users/entities/user.entity';
-import { GoogleOauthGuard } from './guards/google-oauth.guard';
-import { TwitterOauthGuard } from './guards/twitter-oauth.guard';
-import { SignupUserDto } from './dto/signup-user.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { VerifyEmailDto } from './dto/verify-email.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+
+import { GoogleOauthGuard } from '@/app/auth/guards/google-oauth.guard';
+import { LocalAuthGuard } from '@/app/auth/guards/local-auth.guard';
+import { TwitterOauthGuard } from '@/app/auth/guards/twitter-oauth.guard';
+
+import { Public } from '@/decorators/public.decorator';
+import { CurrentUser } from '@/decorators/user.decorator';
+
+import { User } from '@/app/users/entities/user.entity';
+
+import { ForgotPasswordDto } from '@/app/auth/dto/forgot-password.dto';
+import { RefreshTokenDto } from '@/app/auth/dto/refresh-token.dto';
+import { ResetPasswordDto } from '@/app/auth/dto/reset-password.dto';
+import { SignupUserDto } from '@/app/auth/dto/signup-user.dto';
+import { UpdatePasswordDto } from '@/app/auth/dto/update-password.dto';
+import { VerifyEmailDto } from '@/app/auth/dto/verify-email.dto';
+
+import { AuthService } from '@/app/auth/auth.service';
+
 import { Request, Response } from 'express';
 
 @Controller('auth')

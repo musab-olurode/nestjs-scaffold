@@ -4,33 +4,37 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../users/entities/user.entity';
+
+import { JwtPayload } from '@/app/auth/strategies/jwt.strategy';
+
+import { Environment, EnvironmentVariables } from '@/validation/env.validation';
+
+import { PasswordReset } from '@/app/auth/entities/password-reset.entity';
+import { User } from '@/app/users/entities/user.entity';
+
+import { ForgotPasswordDto } from '@/app/auth/dto/forgot-password.dto';
+import { ResetPasswordDto } from '@/app/auth/dto/reset-password.dto';
+import { SignupUserDto } from '@/app/auth/dto/signup-user.dto';
+import { UpdatePasswordDto } from '@/app/auth/dto/update-password.dto';
+
+import { UsersService } from '@/app/users/users.service';
+import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
+import { MailService } from '@/mail/mail.service';
+
+import { IdentityProvider } from '@/types/user';
+import { generateToken } from '@/utils';
+import { SuccessResponse } from '@/utils/response';
+
+import { CookieOptions, Request, Response } from 'express';
 import {
 	FindOptionsSelect,
 	FindOptionsWhere,
 	MoreThanOrEqual,
 	Repository,
 } from 'typeorm';
-import { WinstonLoggerService } from '../../logger/winston-logger/winston-logger.service';
-import { IdentityProvider } from '../../types/user';
-import { JwtPayload } from './strategies/jwt.strategy';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { SuccessResponse } from '../../utils/response';
-import { SignupUserDto } from './dto/signup-user.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { MailService } from '../../mail/mail.service';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { PasswordReset } from './entities/password-reset.entity';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { UsersService } from '../users/users.service';
-import { generateToken } from '../../utils';
-import { CookieOptions, Request, Response } from 'express';
-import {
-	Environment,
-	EnvironmentVariables,
-} from '../../validation/env.validation';
 
 @Injectable()
 export class AuthService {
@@ -100,7 +104,7 @@ export class AuthService {
 		return user;
 	}
 
-	async postSignin(user: User, response: Response) {
+	postSignin(user: User, response: Response) {
 		const payload: JwtPayload = { sub: user.id, permissions: user.permissions };
 
 		const {
@@ -144,13 +148,15 @@ export class AuthService {
 		};
 	}
 
-	async signin(user: User, response: Response) {
-		const signinResponse = await this.postSignin(user, response);
+	signin(user: User, response: Response) {
+		const signinResponse = this.postSignin(user, response);
+
 		return new SuccessResponse('Signin successful', signinResponse);
 	}
 
-	async socialSignin(user: User, response: Response) {
-		const signInResponse = await this.postSignin(user, response);
+	socialSignin(user: User, response: Response) {
+		const signInResponse = this.postSignin(user, response);
+
 		return new SuccessResponse('Signin successful', signInResponse);
 	}
 
@@ -167,14 +173,6 @@ export class AuthService {
 		);
 
 		if (existingUserWithEmail) {
-			if (existingUserWithEmail.identityProviderId) {
-				const identityProviderString =
-					existingUserWithEmail.identityProvider.toLowerCase();
-				throw new BadRequestException(
-					`It looks like you've already signed up with ${identityProviderString} using this email address. Please sign in with ${identityProviderString} to access your account.`,
-				);
-			}
-
 			throw new BadRequestException(
 				`It looks like you've already signed up with this email address. Please sign in to access your account.`,
 			);
@@ -184,9 +182,10 @@ export class AuthService {
 			...signupUserDto,
 			permissions: [],
 		});
+
 		await this.userRepository.save(user);
 
-		const signupResponse = await this.postSignin(user, response);
+		const signupResponse = this.postSignin(user, response);
 
 		return new SuccessResponse(
 			'Signup successful',
@@ -204,6 +203,7 @@ export class AuthService {
 		if (user) {
 			if (user.identityProvider) {
 				const identityProviderString = user.identityProvider.toLowerCase();
+
 				throw new BadRequestException(
 					`It looks like you signed up with your ${identityProviderString} account using this email address. Please sign in with ${identityProviderString} to access your account.`,
 				);
@@ -267,11 +267,11 @@ export class AuthService {
 	}
 
 	async updatePassword(user: User, updatePasswordDto: UpdatePasswordDto) {
-		user = await this.userRepository
+		user = (await this.userRepository
 			.createQueryBuilder('user')
 			.where('user.id = :id', { id: user.id })
 			.addSelect('user.password')
-			.getOne();
+			.getOne()) as User;
 
 		const isPasswordMatch = await user.matchPassword(
 			updatePasswordDto.oldPassword,
@@ -356,6 +356,7 @@ export class AuthService {
 					secret: this.configService.get<string>('REFRESH_JWT_SECRET'),
 				},
 			);
+
 			userId = payloadSub;
 		} catch (error) {
 			throw new UnauthorizedException('Invalid token');
@@ -363,7 +364,7 @@ export class AuthService {
 
 		const user = await this.usersService.findOneProfile(userId);
 
-		const refreshTokenResponse = await this.postSignin(user, response);
+		const refreshTokenResponse = this.postSignin(user, response);
 
 		return new SuccessResponse(
 			'Token refreshed successfully',
@@ -378,6 +379,7 @@ export class AuthService {
 			.get<string>('CLIENT_URL')
 			.split('//');
 		let cookieDomain = clientUrlParts[1];
+
 		if (cookieDomain.startsWith('www.')) {
 			cookieDomain = cookieDomain.slice(4);
 		}
@@ -392,7 +394,7 @@ export class AuthService {
 		return cookieOptions;
 	}
 
-	async signout(response: Response) {
+	signout(response: Response) {
 		const cookieOptions = this.getCookieOptions();
 
 		response.clearCookie('accessToken', cookieOptions);

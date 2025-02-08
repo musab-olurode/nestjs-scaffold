@@ -1,4 +1,5 @@
 import { Injectable, LoggerService, Scope } from '@nestjs/common';
+
 import { createLogger, format, transports } from 'winston';
 
 const { combine, timestamp, json } = format;
@@ -16,15 +17,15 @@ export class WinstonLoggerService implements LoggerService {
 		this.context = context;
 	}
 
-	log(message: any, ...optionalParams: any[]) {
+	log(message: unknown, ...optionalParams: unknown[]) {
 		logger.info(`[${this.context}] ${message}`, ...optionalParams);
 	}
 
-	error(message: any, ...optionalParams: any[]) {
+	error(message: unknown, ...optionalParams: unknown[]) {
 		logger.error(`[${this.context}] ${message}`, ...optionalParams);
 	}
 
-	warn(message: any, ...optionalParams: any[]) {
+	warn(message: unknown, ...optionalParams: unknown[]) {
 		logger.warn(`[${this.context}] ${message}`, ...optionalParams);
 	}
 }

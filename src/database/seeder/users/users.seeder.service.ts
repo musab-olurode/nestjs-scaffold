@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArrayContains, Repository } from 'typeorm';
+
 import { User } from '../../../app/users/entities/user.entity';
-import { SUPER_ADMIN } from './data';
+
+import { ArrayContains, Repository } from 'typeorm';
+
+import { AppPermissions } from '../../../app/auth/permissions/app.permission';
 import configuration from '../../../config/configuration';
 import { SeederServiceProvider } from '../../../types/seeder';
-import { AppPermissions } from '../../../app/auth/permissions/app.permission';
+import { SUPER_ADMIN } from './data';
 
 @Injectable()
 export class UsersSeederService implements SeederServiceProvider {

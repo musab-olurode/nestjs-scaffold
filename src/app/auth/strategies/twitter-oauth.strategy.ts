@@ -1,11 +1,15 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy } from 'passport-twitter';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UsersService } from 'src/app/users/users.service';
-import { IdentityProvider } from '../../../types/user';
-import { AuthService } from '../auth.service';
-import { EnvironmentVariables } from '../../../validation/env.validation';
+import { PassportStrategy } from '@nestjs/passport';
+
+import { EnvironmentVariables } from '@/validation/env.validation';
+
+import { AuthService } from '@/app/auth/auth.service';
+import { UsersService } from '@/app/users/users.service';
+
+import { IdentityProvider } from '@/types/user';
+
+import { Profile, Strategy } from 'passport-twitter';
 
 @Injectable()
 export class TwitterOauthStrategy extends PassportStrategy(
@@ -34,6 +38,10 @@ export class TwitterOauthStrategy extends PassportStrategy(
 		profile: Profile,
 	) {
 		const { id, emails, name } = profile;
+
+		if (!emails || emails.length === 0 || !name) {
+			throw new BadRequestException('Invalid profile');
+		}
 
 		const existingNonTwitterProviderUser = await this.authService.findOneUser(
 			{

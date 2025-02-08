@@ -1,21 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import configuration from '../config/configuration';
-import { DatabaseModule } from '../database/database.module';
-import { UsersModule } from './users/users.module';
-import { WinstonLoggerService } from '../logger/winston-logger/winston-logger.service';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { RequestLoggingInterceptor } from '../interceptor/request-logging.interceptor';
-import { AuthModule } from './auth/auth.module';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { ErrorsInterceptor } from '../interceptor/error.interceptor';
-import { OtpModule } from './otp/otp.module';
-import { MailModule } from '../mail/mail.module';
-import { AdminModule } from './admin/admin.module';
-import { validate } from '../validation/env.validation';
 
+import { AdminModule } from '@/app/admin/admin.module';
+import { AuthModule } from '@/app/auth/auth.module';
+import { OtpModule } from '@/app/otp/otp.module';
+import { UsersModule } from '@/app/users/users.module';
+import { DatabaseModule } from '@/database/database.module';
+import { MailModule } from '@/mail/mail.module';
+
+import { ErrorsInterceptor } from '@/interceptor/error.interceptor';
+import { RequestLoggingInterceptor } from '@/interceptor/request-logging.interceptor';
+
+import { JwtAuthGuard } from '@/app/auth/guards/jwt-auth.guard';
+
+import { validate } from '@/validation/env.validation';
+
+import { AppController } from '@/app/app.controller';
+
+import { AppService } from '@/app/app.service';
+import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
+
+import configuration from '@/config/configuration';
 @Module({
 	imports: [
 		ConfigModule.forRoot({

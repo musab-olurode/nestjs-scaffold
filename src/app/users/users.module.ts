@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { WinstonLoggerService } from '../../logger/winston-logger/winston-logger.service';
+
+import { User } from '@/app/users/entities/user.entity';
+
+import { UsersController } from '@/app/users/users.controller';
+
+import { UsersService } from '@/app/users/users.service';
+import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([User])],

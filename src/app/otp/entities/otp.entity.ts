@@ -1,13 +1,15 @@
+import { User } from '@/app/users/entities/user.entity';
+import { Timestamp } from '@/database/entities/timestamp.entity';
+
+import { OTPReason } from '@/types/otp';
+
 import {
-	Entity,
 	Column,
-	PrimaryGeneratedColumn,
-	ManyToOne,
+	Entity,
 	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Timestamp } from '../../../database/entities/timestamp.entity';
-import { OTPReason } from '../../../types/otp';
-import { User } from '../../users/entities/user.entity';
 
 @Entity('otp')
 export class OTP extends Timestamp {

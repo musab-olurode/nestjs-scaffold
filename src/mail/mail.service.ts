@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
-import { User } from '../app/users/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { OTP } from '../app/otp/entities/otp.entity';
-import { OTPReasonText } from '../types/otp';
-import { EnvironmentVariables } from '../validation/env.validation';
+import { MailerService } from '@nestjs-modules/mailer';
+
+import { EnvironmentVariables } from '@/validation/env.validation';
+
+import { OTP } from '@/app/otp/entities/otp.entity';
+import { User } from '@/app/users/entities/user.entity';
+
+import { OTPReasonText } from '@/types/otp';
 
 @Injectable()
 export class MailService {

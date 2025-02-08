@@ -1,15 +1,20 @@
 import {
-	Controller,
-	Get,
-	Post,
 	Body,
-	Patch,
-	Param,
+	Controller,
 	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+
+import { Public } from '@/decorators/public.decorator';
+
+import { CreateUserDto } from '@/app/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/app/users/dto/update-user.dto';
+
+import { UsersService } from '@/app/users/users.service';
+
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('users')
@@ -21,6 +26,7 @@ export class UsersController {
 		return this.usersService.create(createUserDto);
 	}
 
+	@Public()
 	@Get()
 	public findAll(@Paginate() query: PaginateQuery) {
 		return this.usersService.findAll(query);

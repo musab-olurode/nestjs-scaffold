@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { SeederService } from './seeder.service';
-import { PostgresDatabaseProviderModule } from '../providers/postgres.provider.module';
-import { UsersSeederModule } from './users/users.seeder.module';
+
+import { PostgresDatabaseProviderModule } from '@/database/providers/postgres.provider.module';
+import { UsersSeederModule } from '@/database/seeder/users/users.seeder.module';
+
+import { SeederService } from '@/database/seeder/seeder.service';
 
 @Module({
 	imports: [PostgresDatabaseProviderModule, UsersSeederModule],

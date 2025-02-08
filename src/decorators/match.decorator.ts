@@ -1,3 +1,4 @@
+import { ClassConstructor } from 'class-transformer';
 import {
 	registerDecorator,
 	ValidationArguments,
@@ -5,14 +6,13 @@ import {
 	ValidatorConstraint,
 	ValidatorConstraintInterface,
 } from 'class-validator';
-import { ClassConstructor } from 'class-transformer';
 
 export const IsMatch = <T>(
 	type: ClassConstructor<T>,
-	property: (o: T) => any,
+	property: (o: T) => unknown,
 	validationOptions?: ValidationOptions,
 ) => {
-	return (object: any, propertyName: string) => {
+	return (object: object, propertyName: string) => {
 		registerDecorator({
 			target: object.constructor,
 			propertyName,
@@ -25,13 +25,15 @@ export const IsMatch = <T>(
 
 @ValidatorConstraint({ name: 'IsMatch' })
 export class IsMatchConstraint implements ValidatorConstraintInterface {
-	validate(value: any, args: ValidationArguments) {
+	validate(value: unknown, args: ValidationArguments) {
 		const [fn] = args.constraints;
+
 		return fn(args.object) === value;
 	}
 
 	defaultMessage(args: ValidationArguments) {
-		const [constraintProperty]: (() => any)[] = args.constraints;
+		const [constraintProperty]: (() => unknown)[] = args.constraints;
+
 		return `${constraintProperty} and ${args.property} does not match`;
 	}
 }

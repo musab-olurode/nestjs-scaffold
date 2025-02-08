@@ -1,4 +1,4 @@
-import { ExecutionContext, HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
@@ -7,19 +7,16 @@ export class GoogleOauthGuard extends AuthGuard('google') {
 		super();
 	}
 
-	handleRequest<TUser = any>(
-		err: any,
-		user: any,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		info: any,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		context: ExecutionContext,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		status?: any,
+	handleRequest<TUser = unknown>(
+		err: { code: string; message: string } | undefined,
+		user: TUser,
 	): TUser {
 		if (err || !user) {
 			let errorStatus = 500;
-			if (err.code) {
+			let errorMessage = 'Something went wrong, please try again';
+
+			if (err) {
+				errorMessage = err.message;
 				switch (err.message) {
 					case 'Bad Request':
 						errorStatus = 400;
@@ -29,11 +26,9 @@ export class GoogleOauthGuard extends AuthGuard('google') {
 						break;
 				}
 			}
-			throw new HttpException(
-				err.message || 'Something went wrong, please try again',
-				errorStatus,
-			);
+			throw new HttpException(errorMessage, errorStatus);
 		}
+
 		return user;
 	}
 }

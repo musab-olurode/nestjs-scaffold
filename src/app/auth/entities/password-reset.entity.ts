@@ -1,5 +1,7 @@
+import { User } from '@/app/users/entities/user.entity';
+import { Timestamp } from '@/database/entities/timestamp.entity';
+
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/app/users/entities/user.entity';
 import {
 	BeforeInsert,
 	Column,
@@ -8,7 +10,6 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Timestamp } from '../../../database/entities/timestamp.entity';
 
 @Entity()
 export class PasswordReset extends Timestamp {
@@ -25,6 +26,7 @@ export class PasswordReset extends Timestamp {
 	@BeforeInsert()
 	private generateToken() {
 		const token = Math.floor(1000 + Math.random() * 9000).toString();
+
 		this.token = bcrypt.hashSync(token, 12);
 	}
 }

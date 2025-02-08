@@ -1,7 +1,9 @@
-import { Strategy } from 'passport-local';
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+
 import { AuthService } from '../auth.service';
+
+import { Strategy } from 'passport-local';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -23,13 +25,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
 		if (
 			existingSocialAuthProviderUser &&
-			existingSocialAuthProviderUser.identityProviderId
+			existingSocialAuthProviderUser.identityProvider
 		) {
-			const identityProviderString =
-				existingSocialAuthProviderUser.identityProvider.toLowerCase();
-			throw new UnauthorizedException(
-				`It looks like you've already signed up with ${identityProviderString} using this email address. Please sign in with ${identityProviderString} to access your account.`,
-			);
+			throw new UnauthorizedException('Invalid credentials');
 		}
 
 		const user = await this.authService.validateUser(email, password);

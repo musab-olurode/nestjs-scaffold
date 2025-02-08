@@ -1,13 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { WinstonLoggerService } from '../../logger/winston-logger/winston-logger.service';
-import { SuccessResponse } from '../../utils/response';
+
+import { User } from '@/app/users/entities/user.entity';
+
+import { CreateUserDto } from '@/app/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/app/users/dto/update-user.dto';
+
+import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
+import { PaginationService } from '@/pagination/pagination.service';
+
+import { SuccessResponse } from '@/utils/response';
+
 import { PaginateQuery } from 'nestjs-paginate';
-import { PaginationService } from '../../pagination/pagination.service';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +26,7 @@ export class UsersService {
 
 	async create(createUserDto: CreateUserDto) {
 		const user = this.userRepository.create(createUserDto);
+
 		return await this.userRepository.save(user);
 	}
 
@@ -40,6 +46,7 @@ export class UsersService {
 
 	async findOne(id: string) {
 		const user = await this.getOne(id);
+
 		return new SuccessResponse('User retrieved', user);
 	}
 
@@ -58,8 +65,10 @@ export class UsersService {
 
 	async update(id: string, updateUserDto: UpdateUserDto) {
 		const user = await this.getOne(id);
+
 		Object.assign(user, updateUserDto);
 		const updatedUser = await this.userRepository.save(user);
+
 		return new SuccessResponse('User updated', updatedUser);
 	}
 

@@ -1,25 +1,29 @@
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+
+import { EnvironmentVariables } from '@/validation/env.validation';
+
+import { MailService } from '@/mail/mail.service';
+
 import { join } from 'path';
-import { MailService } from './mail.service';
-import { EnvironmentVariables } from '../validation/env.validation';
 
 @Module({
 	imports: [
 		MailerModule.forRootAsync({
-			useFactory: async (
-				config: ConfigService<EnvironmentVariables, true>,
-			) => ({
+			useFactory: (config: ConfigService<EnvironmentVariables, true>) => ({
 				transport: {
 					host: config.get('SMTP_HOST'),
 					port: config.get<number>('SMTP_PORT'),
 					secure: config.get('NODE_ENV') === 'production',
-					auth: config.get('NODE_ENV') === 'production' && {
-						user: config.get('SMTP_EMAIL'),
-						pass: config.get('SMTP_PASSWORD'),
-					},
+					auth:
+						config.get('NODE_ENV') === 'production'
+							? {
+									user: config.get('SMTP_EMAIL'),
+									pass: config.get('SMTP_PASSWORD'),
+								}
+							: undefined,
 					tls: {
 						rejectUnauthorized: config.get('NODE_ENV') === 'production',
 					},

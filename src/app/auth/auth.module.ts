@@ -1,20 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { LocalStrategy } from './strategies/local.strategy';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { GoogleOauthStrategy } from './strategies/google-oauth.strategy';
-import { TwitterOauthStrategy } from './strategies/twitter-oauth.strategy';
-import { SessionSerializer } from './strategies/session.serializer';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../users/entities/user.entity';
-import { PasswordReset } from './entities/password-reset.entity';
-import { PassportModule } from '@nestjs/passport';
-import { UsersModule } from '../users/users.module';
-import { MailModule } from '../../mail/mail.module';
-import { WinstonLoggerService } from '../../logger/winston-logger/winston-logger.service';
 import { JwtModule } from '@nestjs/jwt';
-import configuration from '../../config/configuration';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { UsersModule } from '@/app/users/users.module';
+import { MailModule } from '@/mail/mail.module';
+
+import { GoogleOauthStrategy } from '@/app/auth/strategies/google-oauth.strategy';
+import { JwtStrategy } from '@/app/auth/strategies/jwt.strategy';
+import { LocalStrategy } from '@/app/auth/strategies/local.strategy';
+import { TwitterOauthStrategy } from '@/app/auth/strategies/twitter-oauth.strategy';
+
+import { PasswordReset } from '@/app/auth/entities/password-reset.entity';
+import { User } from '@/app/users/entities/user.entity';
+
+import { AuthController } from '@/app/auth/auth.controller';
+
+import { AuthService } from '@/app/auth/auth.service';
+import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
+
+import { SessionSerializer } from '@/app/auth/strategies/session.serializer';
+import configuration from '@/config/configuration';
 
 @Module({
 	imports: [

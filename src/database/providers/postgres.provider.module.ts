@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppDataSource } from '../ormconfig';
+
+import { AppDataSource } from '@/database/ormconfig';
 
 @Module({
 	imports: [
@@ -8,6 +9,7 @@ import { AppDataSource } from '../ormconfig';
 			useFactory: () => {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				const { migrations, entities, ...rest } = AppDataSource.options;
+
 				return {
 					...rest,
 					migrationsRun: true,

@@ -1,20 +1,23 @@
 import {
+	CallHandler,
+	ExecutionContext,
+	HttpException,
 	Injectable,
 	NestInterceptor,
-	ExecutionContext,
-	CallHandler,
 	RequestTimeoutException,
-	HttpException,
 } from '@nestjs/common';
+
+import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
+
+import configuration from '@/config/configuration';
+
+import { AxiosError } from 'axios';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AxiosError } from 'axios';
-import configuration from '../config/configuration';
-import { WinstonLoggerService } from '../logger/winston-logger/winston-logger.service';
 
 @Injectable()
 export class ErrorsInterceptor implements NestInterceptor {
-	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+	intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
 		return next.handle().pipe(
 			catchError((err) => {
 				if (err instanceof AxiosError) {
@@ -22,7 +25,7 @@ export class ErrorsInterceptor implements NestInterceptor {
 						() =>
 							new HttpException(
 								err.response?.data.message,
-								err.response?.status,
+								err.response?.status ?? 500,
 							),
 					);
 				} else if (err.message.includes('timeout')) {
@@ -38,11 +41,13 @@ export class ErrorsInterceptor implements NestInterceptor {
 				if (errorStatus === 500) {
 					if (IS_PRODUCTION) {
 						const logger = new WinstonLoggerService();
+
 						logger.setContext('ErrorsInterceptor');
 						logger.error(errorMessage, { stack: err.stack });
 						errorMessage =
 							'Oops! Something went wrong on our end. Please try again later.';
 					}
+					// eslint-disable-next-line no-console
 					console.error(err);
 				}
 
