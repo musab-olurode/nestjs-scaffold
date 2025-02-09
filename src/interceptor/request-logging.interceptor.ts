@@ -35,7 +35,7 @@ export class RequestLoggingInterceptor implements NestInterceptor {
 
 		const requestHash = nanoid();
 
-		this.logger.log(`=== [START] HTTP request ${requestHash} ===`);
+		this.logger.log(`========= [START] HTTP request ${requestHash} =========`);
 		this.logger.log(`HTTP request ${requestHash}`, {
 			method,
 			url,
@@ -51,7 +51,9 @@ export class RequestLoggingInterceptor implements NestInterceptor {
 						`HTTP response ${requestHash} +${Date.now() - now}ms`,
 						responseBody,
 					);
-					this.logger.log(`=== [END] HTTP request ${requestHash} ===`);
+					this.logger.log(
+						`========= [END] HTTP request ${requestHash} =========`,
+					);
 				},
 			}),
 		);

@@ -8,8 +8,6 @@ import {
 	Post,
 } from '@nestjs/common';
 
-import { Public } from '@/decorators/public.decorator';
-
 import { CreateUserDto } from '@/app/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/app/users/dto/update-user.dto';
 
@@ -26,7 +24,6 @@ export class UsersController {
 		return this.usersService.create(createUserDto);
 	}
 
-	@Public()
 	@Get()
 	public findAll(@Paginate() query: PaginateQuery) {
 		return this.usersService.findAll(query);

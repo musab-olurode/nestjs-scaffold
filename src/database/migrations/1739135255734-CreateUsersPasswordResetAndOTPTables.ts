@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateUsersPasswordResetAndOTPTables1739049929295
+export class CreateUsersPasswordResetAndOTPTables1739135255734
 	implements MigrationInterface
 {
-	name = 'CreateUsersPasswordResetAndOTPTables1739049929295';
+	name = 'CreateUsersPasswordResetAndOTPTables1739135255734';
 
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.query(
 			`CREATE TYPE "public"."user_identity_provider_enum" AS ENUM('GOOGLE', 'TWITTER')`,
 		);
 		await queryRunner.query(
-			`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "identity_provider" "public"."user_identity_provider_enum", "identity_provider_id" character varying, "email" character varying NOT NULL, "password" character varying, "first_name" character varying NOT NULL, "last_name" character varying NOT NULL, "permissions" text array NOT NULL, "email_verification_token" character varying, "email_verified" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "UQ_8b068ccc9f2d780253f5d7eae3b" UNIQUE ("identity_provider_id"), CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "UQ_54663aeef9987efe0b4a3bda93a" UNIQUE ("email_verification_token"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`,
+			`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "identity_provider" "public"."user_identity_provider_enum", "identity_provider_id" character varying, "email" character varying NOT NULL, "password" character varying, "first_name" character varying NOT NULL, "last_name" character varying NOT NULL, "permissions" text array NOT NULL DEFAULT '{}', "email_verification_token" character varying, "email_verified" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "UQ_8b068ccc9f2d780253f5d7eae3b" UNIQUE ("identity_provider_id"), CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "UQ_54663aeef9987efe0b4a3bda93a" UNIQUE ("email_verification_token"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`,
 		);
 		await queryRunner.query(
 			`CREATE TYPE "public"."otp_reason_enum" AS ENUM('PIN_RESET')`,

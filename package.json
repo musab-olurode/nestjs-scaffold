@@ -21,10 +21,12 @@
 		"typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./src/database/ormconfig.ts",
 		"migration:run": "npm run typeorm -- migration:run",
 		"migration:revert": "npm run typeorm -- migration:revert",
-		"seed": "ts-node -r tsconfig-paths/register ./src/database/seeder/seed.ts",
+		"seed:run": "ts-node -r tsconfig-paths/register ./node_modules/@jorgebodega/typeorm-seeding/dist/cli.js seed -d ./src/database/ormconfig.ts ./src/database/seeders/*.ts",
 		"prepare": "husky install"
 	},
 	"dependencies": {
+		"@jorgebodega/typeorm-factory": "^2.1.0",
+		"@jorgebodega/typeorm-seeding": "^7.1.0",
 		"@nestjs-modules/mailer": "^1.11.2",
 		"@nestjs/common": "^10.0.0",
 		"@nestjs/config": "^3.2.2",
@@ -34,6 +36,7 @@
 		"@nestjs/passport": "^10.0.3",
 		"@nestjs/platform-express": "^10.0.0",
 		"@nestjs/typeorm": "^10.0.2",
+		"@ngneat/falso": "^7.3.0",
 		"axios": "^1.6.8",
 		"bcrypt": "^5.1.1",
 		"class-transformer": "^0.5.1",

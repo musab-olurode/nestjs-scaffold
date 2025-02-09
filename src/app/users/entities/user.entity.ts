@@ -41,7 +41,7 @@ export class User extends Timestamp {
 	})
 	lastName: string;
 
-	@Column({ type: 'text', array: true })
+	@Column({ type: 'text', array: true, default: [] })
 	permissions: AppPermissions[];
 
 	@Column({
