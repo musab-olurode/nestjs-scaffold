@@ -1,36 +1,11 @@
-import { Timestamp } from '@/database/entities/timestamp.entity';
+import { IDAndTimestamp } from '@/database/entities/id-and-timestamp.entity';
 
-import { AppPermissions } from '@/app/auth/permissions/app.permission';
-import { IdentityProvider } from '@/types/user';
 import { CapitalizeTransformer } from '@/utils/transformers/capitalize';
 
-import * as bcrypt from 'bcrypt';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity()
-export class User extends Timestamp {
-	@Column({
-		type: 'enum',
-		enum: IdentityProvider,
-		nullable: true,
-		select: false,
-	})
-	identityProvider: IdentityProvider | null;
-
-	@Column({
-		type: String,
-		unique: true,
-		nullable: true,
-		select: false,
-	})
-	identityProviderId: string | null;
-
-	@Column({ unique: true })
-	email: string;
-
-	@Column({ type: String, select: false, nullable: true })
-	password: string | null;
-
+export class User extends IDAndTimestamp {
 	@Column({
 		transformer: new CapitalizeTransformer(),
 	})
@@ -41,31 +16,24 @@ export class User extends Timestamp {
 	})
 	lastName: string;
 
-	@Column({ type: 'text', array: true, default: [] })
-	permissions: AppPermissions[];
-
-	@Column({
-		type: String,
-		nullable: true,
-		unique: true,
-		select: false,
-	})
-	emailVerificationToken: string | null;
+	@Column({ unique: true })
+	email: string;
 
 	@Column({ default: false })
 	emailVerified: boolean;
 
-	@BeforeInsert()
-	@BeforeUpdate()
-	private async hashPassword() {
-		if (this.password) {
-			const salt = await bcrypt.genSalt(10);
+	@Column({ type: String, nullable: true })
+	image: string | null;
 
-			this.password = bcrypt.hashSync(this.password, salt);
-		}
-	}
+	@Column({ default: 'user' })
+	role: string;
 
-	public async matchPassword(enteredPassword: string) {
-		return await bcrypt.compare(enteredPassword, this.password!);
-	}
+	@Column({ default: false })
+	banned: boolean;
+
+	@Column({ type: String, nullable: true })
+	banReason: string | null;
+
+	@Column({ type: Date, nullable: true })
+	banExpires: Date | null;
 }

@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import configuration from '@/config/configuration';
 
 import { DataSource } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 export const AppDataSource = new DataSource({
 	type: configuration.TYPEORM_CONNECTION,
@@ -15,5 +14,4 @@ export const AppDataSource = new DataSource({
 	database: configuration.TYPEORM_DATABASE,
 	migrations: [configuration.TYPEORM_MIGRATIONS],
 	entities: [configuration.TYPEORM_ENTITIES],
-	namingStrategy: new SnakeNamingStrategy(),
 });

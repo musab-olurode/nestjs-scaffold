@@ -1,21 +1,12 @@
 import { User } from '@/app/users/entities/user.entity';
-import { Timestamp } from '@/database/entities/timestamp.entity';
+import { IDAndTimestamp } from '@/database/entities/id-and-timestamp.entity';
 
 import { OTPReason } from '@/types/otp';
 
-import {
-	Column,
-	Entity,
-	JoinColumn,
-	ManyToOne,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('otp')
-export class OTP extends Timestamp {
-	@PrimaryGeneratedColumn('uuid')
-	id: string;
-
+export class OTP extends IDAndTimestamp {
 	@Column({ type: 'enum', enum: OTPReason })
 	reason: OTPReason;
 
@@ -23,6 +14,6 @@ export class OTP extends Timestamp {
 	code: string;
 
 	@ManyToOne(() => User)
-	@JoinColumn({ name: 'user_id' })
+	@JoinColumn({ name: 'userId' })
 	user: User;
 }

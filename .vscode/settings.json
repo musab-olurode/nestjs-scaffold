@@ -2,5 +2,5 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.preferences.importModuleSpecifier": "non-relative",
 	"javascript.preferences.importModuleSpecifier": "non-relative",
-	"cSpell.words": ["healthcheck", "Metadatas"]
+	"cSpell.words": ["healthcheck", "Metadatas", "metatype"]
 }

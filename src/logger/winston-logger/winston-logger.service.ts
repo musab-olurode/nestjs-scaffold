@@ -17,15 +17,15 @@ export class WinstonLoggerService implements LoggerService {
 		this.context = context;
 	}
 
-	log(message: unknown, ...optionalParams: unknown[]) {
+	log(message: string, ...optionalParams: unknown[]) {
 		logger.info(`[${this.context}] ${message}`, ...optionalParams);
 	}
 
-	error(message: unknown, ...optionalParams: unknown[]) {
+	error(message: string, ...optionalParams: unknown[]) {
 		logger.error(`[${this.context}] ${message}`, ...optionalParams);
 	}
 
-	warn(message: unknown, ...optionalParams: unknown[]) {
+	warn(message: string, ...optionalParams: unknown[]) {
 		logger.warn(`[${this.context}] ${message}`, ...optionalParams);
 	}
 }

@@ -29,7 +29,7 @@ import { join } from 'path';
 					},
 				},
 				defaults: {
-					from: `"${config.get('FROM_NAME')}" <${config.get('FROM_EMAIL')}>`,
+					from: `"${config.get<string>('FROM_NAME')}" <${config.get<string>('FROM_EMAIL')}>`,
 				},
 				template: {
 					dir: join(__dirname, 'templates'),

@@ -32,7 +32,7 @@ export class IsMatchConstraint implements ValidatorConstraintInterface {
 	}
 
 	defaultMessage(args: ValidationArguments) {
-		const [constraintProperty]: (() => unknown)[] = args.constraints;
+		const [constraintProperty]: string[] = args.constraints;
 
 		return `${constraintProperty} and ${args.property} does not match`;
 	}

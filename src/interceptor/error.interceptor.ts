@@ -7,6 +7,8 @@ import {
 	RequestTimeoutException,
 } from '@nestjs/common';
 
+import { Environment } from '@/validation/env.validation';
+
 import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
 
 import configuration from '@/config/configuration';
@@ -34,9 +36,9 @@ export class ErrorsInterceptor implements NestInterceptor {
 					);
 				}
 
-				const errorStatus = err.status || 500;
-				let errorMessage = err.message || err;
-				const IS_PRODUCTION = configuration.NODE_ENV === 'production';
+				const errorStatus = err.status ?? 500;
+				let errorMessage = err.message ?? err;
+				const IS_PRODUCTION = configuration.NODE_ENV === Environment.Production;
 
 				if (errorStatus === 500) {
 					if (IS_PRODUCTION) {
