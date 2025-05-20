@@ -57,12 +57,12 @@ const auth = betterAuth({
 	},
 	socialProviders: {
 		google: {
-			clientId: configuration.OAUTH_GOOGLE_ID,
-			clientSecret: configuration.OAUTH_GOOGLE_SECRET,
+			clientId: configuration.OAUTH_GOOGLE_CLIENT_ID,
+			clientSecret: configuration.OAUTH_GOOGLE_CLIENT_SECRET,
 		},
 		twitter: {
-			clientId: configuration.OAUTH_TWITTER_CONSUMER_KEY,
-			clientSecret: configuration.OAUTH_TWITTER_CONSUMER_SECRET,
+			clientId: configuration.OAUTH_TWITTER_CLIENT_ID,
+			clientSecret: configuration.OAUTH_TWITTER_CLIENT_SECRET,
 		},
 	},
 	advanced: {
