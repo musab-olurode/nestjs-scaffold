@@ -35,28 +35,23 @@ export class EnvironmentVariables {
 	@IsUrl({ require_tld: false, require_protocol: true })
 	CLIENT_URL!: string;
 
-	// Strict decorator for interface PostgresConnectionOptions['type']
+	@IsString()
+	BETTER_AUTH_SECRET!: string;
+
+	@IsUrl({ require_tld: false, require_protocol: true })
+	BETTER_AUTH_URL!: string;
+
+	@IsString()
+	TRUSTED_ORIGINS!: string;
+
+	@IsString()
+	CROSS_DOMAIN_ORIGIN: string;
+
 	@IsString()
 	TYPEORM_CONNECTION!: PostgresConnectionOptions['type'];
 
 	@IsString()
 	TYPEORM_URL!: string;
-
-	@IsString()
-	TYPEORM_HOST!: string;
-
-	@IsInt()
-	@Type(() => Number)
-	TYPEORM_PORT!: number;
-
-	@IsString()
-	TYPEORM_DATABASE!: string;
-
-	@IsString()
-	TYPEORM_USERNAME!: string;
-
-	@IsString()
-	TYPEORM_PASSWORD!: string;
 
 	@IsBoolean()
 	@Type(() => Boolean)
@@ -77,41 +72,21 @@ export class EnvironmentVariables {
 	@IsString()
 	TYPEORM_COLLATION!: string;
 
-	@IsString()
-	JWT_SECRET!: string;
-
-	@IsString()
-	JWT_EXPIRE!: string;
-
-	@IsString()
-	REFRESH_JWT_SECRET!: string;
-
-	@IsString()
-	REFRESH_JWT_EXPIRE!: string;
-
-	@IsInt()
-	@Type(() => Number)
-	JWT_COOKIE_EXPIRE!: number;
-
-	@IsInt()
-	@Type(() => Number)
-	REFRESH_JWT_COOKIE_EXPIRE!: number;
-
 	@IsInt()
 	@Type(() => Number)
 	SECURE_TOKEN_EXPIRY!: number;
 
 	@IsString()
-	OAUTH_GOOGLE_ID!: string;
+	OAUTH_GOOGLE_CLIENT_ID!: string;
 
 	@IsString()
-	OAUTH_GOOGLE_SECRET!: string;
+	OAUTH_GOOGLE_CLIENT_SECRET!: string;
 
 	@IsString()
-	OAUTH_TWITTER_CONSUMER_KEY!: string;
+	OAUTH_TWITTER_CLIENT_ID!: string;
 
 	@IsString()
-	OAUTH_TWITTER_CONSUMER_SECRET!: string;
+	OAUTH_TWITTER_CLIENT_SECRET!: string;
 
 	@IsEmail()
 	FROM_EMAIL!: string;
@@ -143,9 +118,6 @@ export class EnvironmentVariables {
 
 	@IsString()
 	CLOUDINARY_URL!: string;
-
-	@IsString()
-	PASSPORT_SESSION_SECRET!: string;
 
 	@IsInt()
 	@Type(() => Number)

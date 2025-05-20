@@ -1,7 +1,8 @@
 import { User } from '@/app/users/entities/user.entity';
 
-import { AppPermissions } from '@/app/auth/permissions/app.permission';
+import auth from '@/app/auth/auth';
 import configuration from '@/config/configuration';
+// import { AppPermissions } from '@/app/auth/permissions/app.permission';
 import { UserFactory } from '@/database/factories/user.factory';
 
 import { Seeder } from '@jorgebodega/typeorm-seeding';
@@ -16,16 +17,19 @@ export default class UserSeeder extends Seeder {
 		});
 
 		if (!existingSuperAdmin) {
-			await new UserFactory().create({
-				firstName: 'Dev',
-				lastName: 'Admin',
-				permissions: [
-					AppPermissions.CREATE_USERS,
-					AppPermissions.READ_USERS,
-					AppPermissions.UPDATE_USERS,
-				],
-				email: configuration.SUPER_ADMIN_EMAIL,
-				password: configuration.SUPER_ADMIN_PASSWORD,
+			await auth.api.createUser({
+				body: {
+					name: 'Dev',
+					lastName: 'Admin',
+					email: configuration.SUPER_ADMIN_EMAIL,
+					password: configuration.SUPER_ADMIN_PASSWORD,
+					role: 'admin',
+				} as {
+					name: string;
+					lastName: string;
+					email: string;
+					password: string;
+				},
 			});
 		}
 

@@ -7,8 +7,8 @@ import {
 
 import { WinstonLoggerService } from '@/logger/winston-logger/winston-logger.service';
 
+import { createId } from '@paralleldrive/cuid2';
 import { Request } from 'express';
-import { nanoid } from 'nanoid';
 import { Observable, tap } from 'rxjs';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class RequestLoggingInterceptor implements NestInterceptor {
 
 		const { method, url, body, ip, query } = req;
 
-		const requestHash = nanoid();
+		const requestHash = createId();
 
 		this.logger.log(`========= [START] HTTP request ${requestHash} =========`);
 		this.logger.log(`HTTP request ${requestHash}`, {
@@ -47,8 +47,10 @@ export class RequestLoggingInterceptor implements NestInterceptor {
 		return next.handle().pipe(
 			tap({
 				next: (responseBody) => {
+					const duration = Date.now() - now;
+
 					this.logger.log(
-						`HTTP response ${requestHash} +${Date.now() - now}ms`,
+						`HTTP response ${requestHash} +${duration.toString()}ms`,
 						responseBody,
 					);
 					this.logger.log(

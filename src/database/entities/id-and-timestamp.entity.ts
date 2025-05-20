@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
-export abstract class Timestamp extends BaseEntity {
+export abstract class IDAndTimestamp extends BaseEntity {
 	@ColumnOrder(-1)
 	@PrimaryGeneratedColumn('uuid')
 	id: string;

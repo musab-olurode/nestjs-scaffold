@@ -8,15 +8,15 @@ import { AppModule } from '@/app/app.module';
 import { EnvironmentVariables } from '@/validation/env.validation';
 
 import { CLIENT_URL_REGEX, PREVIEW_CLIENT_URL_REGEX } from '@/utils/constants';
-
-import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
-import * as passport from 'passport';
-
-import { validationExceptionFactory } from './utils/validation';
+import { validationExceptionFactory } from '@/utils/validation';
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+		bodyParser: false,
+	});
+
+	app.set('query parser', 'extended');
+
 	const config: ConfigService<EnvironmentVariables, true> =
 		app.get(ConfigService);
 
@@ -27,31 +27,20 @@ async function bootstrap() {
 			exceptionFactory: validationExceptionFactory,
 		}),
 	);
+
+	const trustedOrigins = config.get<string>('TRUSTED_ORIGINS').split(',');
+
 	app.enableCors({
 		origin: [
+			...trustedOrigins,
 			new RegExp(CLIENT_URL_REGEX),
 			new RegExp(PREVIEW_CLIENT_URL_REGEX),
 		],
 		credentials: true,
 	});
-	const sessionSecret = config.get<string>('PASSPORT_SESSION_SECRET');
-
-	app.set('trust proxy', 1);
-	app.use(
-		session({
-			secret: sessionSecret,
-			resave: false,
-			saveUninitialized: true,
-			proxy: true,
-			cookie: { secure: true, sameSite: 'none' },
-		}),
-	);
-	app.use(passport.initialize());
-	app.use(passport.session());
-	app.use(cookieParser());
 
 	const port = config.get<number>('PORT');
 
 	await app.listen(port);
 }
-bootstrap();
+void bootstrap();

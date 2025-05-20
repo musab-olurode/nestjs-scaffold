@@ -17,9 +17,11 @@ export class OtpService {
 		@InjectRepository(OTP)
 		private readonly otpRepository: Repository<OTP>,
 		private readonly configService: ConfigService<EnvironmentVariables, true>,
-	) {}
+	) {
+		this.OTPExpiryInMs = this.configService.get<number>('SECURE_TOKEN_EXPIRY');
+	}
 
-	private OTPExpiryInMs = this.configService.get<number>('SECURE_TOKEN_EXPIRY');
+	private readonly OTPExpiryInMs: number;
 
 	async generateOtp(otpReason: OTPReason, user: User): Promise<OTP> {
 		const fourDigitOtp = Math.floor(1000 + Math.random() * 9000).toString();
