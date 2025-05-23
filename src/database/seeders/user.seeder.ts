@@ -20,15 +20,12 @@ export default class UserSeeder extends Seeder {
 			await auth.api.createUser({
 				body: {
 					name: 'Dev',
-					lastName: 'Admin',
 					email: configuration.SUPER_ADMIN_EMAIL,
 					password: configuration.SUPER_ADMIN_PASSWORD,
 					role: 'admin',
-				} as {
-					name: string;
-					lastName: string;
-					email: string;
-					password: string;
+					data: {
+						lastName: 'Admin',
+					},
 				},
 			});
 		}

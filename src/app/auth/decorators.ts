@@ -1,6 +1,7 @@
 import type { ExecutionContext } from '@nestjs/common';
 import { createParamDecorator, SetMetadata } from '@nestjs/common';
 
+import { AccessControlStatement } from '@/app/auth/permissions';
 import { AFTER_HOOK_KEY, BEFORE_HOOK_KEY, HOOK_KEY } from '@/app/auth/symbols';
 
 /**
@@ -15,6 +16,20 @@ export const Public = () => SetMetadata('PUBLIC', true);
  * even if no session is present.
  */
 export const Optional = () => SetMetadata('OPTIONAL', true);
+
+/**
+ * Marks a route as requiring a specific role.
+ * When applied to a controller method, the AuthGuard will check if the user has the required role.
+ */
+export const Role = (role: 'any' | (string & {})) => SetMetadata('ROLE', role);
+
+/**
+ * Marks a route as requiring specific permissions.
+ * When applied to a controller method, the AuthGuard will check if the user has the required permissions.
+ */
+export const Permissions = (permissions: {
+	[K in keyof AccessControlStatement]?: AccessControlStatement[K][number][];
+}) => SetMetadata('PERMISSIONS', permissions);
 
 /**
  * Parameter decorator that extracts the user session from the request.

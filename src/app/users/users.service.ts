@@ -11,7 +11,7 @@ import { PaginationService } from '@/pagination/pagination.service';
 
 import { SuccessResponse } from '@/utils/response';
 
-import { PaginateQuery } from 'nestjs-paginate';
+import { FilterOperator, PaginateQuery } from 'nestjs-paginate';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -31,7 +31,12 @@ export class UsersService {
 	}
 
 	findAll(query: PaginateQuery) {
-		return PaginationService.paginate(query, this.userRepository);
+		return PaginationService.paginate(query, this.userRepository, {
+			searchableColumns: ['firstName', 'lastName', 'email'],
+			filterableColumns: {
+				firstName: [FilterOperator.EQ],
+			},
+		});
 	}
 
 	async getOne(id: string) {
