@@ -34,15 +34,12 @@ export class UserFactory extends Factory<User> {
 
 			return auth.api.createUser({
 				body: {
-					email: params.email,
+					email: params.email as string,
 					password: randPassword() as unknown as string,
-					name: params.firstName,
-					lastName: params.lastName,
-				} as {
-					email: string;
-					password: string;
-					name: string;
-					lastName: string;
+					name: params.firstName as string,
+					data: {
+						lastName: params.lastName as string,
+					},
 				},
 			});
 		});

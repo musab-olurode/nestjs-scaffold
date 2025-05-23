@@ -6,7 +6,10 @@ import {
 	Param,
 	Patch,
 	Post,
+	UseGuards,
 } from '@nestjs/common';
+
+import { AuthGuard } from '@/app/auth/auth.guard';
 
 import { CreateUserDto } from '@/app/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/app/users/dto/update-user.dto';
@@ -16,6 +19,7 @@ import { UsersService } from '@/app/users/users.service';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
